@@ -108,4 +108,6 @@ ZSH_THEME="devcontainers"
 4. Chọn: zsh
 * Tips: là vào trong workspaces trên github rồi vào xem tệp custom theme sau đó copy và tạo ra cái của mình hehee
 
-Refer: https://thuanbui.me/len-doi-terminal-voi-zsh-va-oh-my-zsh/#ii-cai-dat-oh-my-zsh
+Refer: 
+- https://thuanbui.me/len-doi-terminal-voi-zsh-va-oh-my-zsh/#ii-cai-dat-oh-my-zsh
+- https://github.com/ohmyzsh/ohmyzsh
