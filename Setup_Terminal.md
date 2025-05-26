@@ -106,5 +106,6 @@ ZSH_THEME="devcontainers"
 2. Nhấn Ctrl + , để mở Settings.
 3. Tìm: terminal.integrated.defaultProfile.linux
 4. Chọn: zsh
-* Tips: là vào trong workspaces trên github rồi vào xem tệp custom theme sau đó copy và tạo ra cái của mình hehe
+* Tips: là vào trong workspaces trên github rồi vào xem tệp custom theme sau đó copy và tạo ra cái của mình hehee
 
+Refer: https://thuanbui.me/len-doi-terminal-voi-zsh-va-oh-my-zsh/#ii-cai-dat-oh-my-zsh
