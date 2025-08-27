@@ -1,113 +1,86 @@
-# Cách Setup Terminal Đẹp (ZSH + Oh My Zsh)
+# Cách Setup Terminal Đẹp (BASH + Oh My Bash)
 
-## Bước 1: Cài `zsh`
-
-```bash
-sudo apt install zsh -y         # Dành cho Ubuntu / WSL
-chsh -s $(which zsh)            # Đặt zsh làm shell mặc định
-```
-## Bước 2: Cài Oh My Zsh
+## Bước 1: 
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+chsh -s $(which zsh)        # Đặt bash làm shell mặc định
 ```
-
-## Bước 3: Cài Plugin
+## Bước 2: Cài Oh My Bash
 
 ```bash
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 ```
 
-## Bước 4: Chỉnh sửa file cấu hình ~/.zshrc
 
-```bash
-nano ~/.zshrc
-```
-Tìm dòng plugins= và chỉnh sửa như sau:
-
-```bash
-plugins=(
-  git
-  docker
-  docker-compose
-  history
-  rsync
-  safe-paste
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-)
-```
 ## Bước 5: Cài theme terminal đẹp
 Tạo file theme mới:
 
 ```bash
-nano ~/.oh-my-zsh/custom/themes/devcontainers.zsh-theme
+nano ~/.oh-my-bash/custom/themes/devcontainers/devcontainers.theme.sh
 ```
 
 Paste:
 ```bash
-# Oh My Zsh! theme - partly inspired by robbyrussell theme
-__zsh_prompt() {
-    local prompt_username
-    if [ ! -z "${GITHUB_USER}" ]; then
-        prompt_username="@${GITHUB_USER}"
-    else
-        prompt_username="%n"
+# devcontainers.bash-theme for Oh My Bash
+
+function __omb_theme_git_prompt() {
+  if [ "$(git config --get devcontainers-theme.hide-status 2>/dev/null)" != 1 ] && \
+     [ "$(git config --get codespaces-theme.hide-status 2>/dev/null)" != 1 ]; then
+
+    local branch
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
+    if [[ -n "$branch" ]]; then
+      local dirty=""
+      if [ "$(git config --get devcontainers-theme.show-dirty 2>/dev/null)" = 1 ] && \
+         git ls-files --error-unmatch -m --directory --no-empty-directory -o --exclude-standard ":/*" >/dev/null 2>&1; then
+        dirty=" \e[1;33m✗"
+      fi
+      # Remove \[\] from inside echo
+      echo -e "\e[1;36m(\e[1;31m${branch}${dirty}\e[1;36m)\e[0m "
     fi
-    PROMPT="%{$fg[green]%}${prompt_username} %(?:%{$reset_color%}➜ :%{$fg_bold[red]%}➜ )"
-    PROMPT+='%{$fg_bold[blue]%}%(5~|%-1~/…/%3~|%4~)%{$reset_color%} '
-    PROMPT+='`\
-        if [ "$(git config --get devcontainers-theme.hide-status 2>/dev/null)" != 1 ] && [ "$(git config --get codespaces-theme.hide-status 2>/dev/null)" != 1 ]; then \
-            export BRANCH=$(git --no-optional-locks symbolic-ref --short HEAD 2>/dev/null || git --no-optional-locks rev-parse --short HEAD 2>/dev/null); \
-            if [ "${BRANCH}" != "" ]; then \
-                echo -n "%{$fg_bold[cyan]%}(%{$fg_bold[red]%}${BRANCH}" \
-                && if [ "$(git config --get devcontainers-theme.show-dirty 2>/dev/null)" = 1 ] && \
-                    git --no-optional-locks ls-files --error-unmatch -m --directory --no-empty-directory -o --exclude-standard ":/*" > /dev/null 2>&1; then \
-                        echo -n " %{$fg_bold[yellow]%}✗"; \
-                fi \
-                && echo -n "%{$fg_bold[cyan]%})%{$reset_color%} "; \
-            fi; \
-        fi`'
-    PROMPT+='%{$fg[white]%}$ %{$reset_color%}'
-    unset -f __zsh_prompt
+  fi
 }
-__zsh_prompt
 
-# Check if the terminal is xterm
-if [[ "$TERM" == "xterm" ]]; then
-    preexec() {
-        local cmd=${1}
-        echo -ne "\033]0;${USER}@${HOSTNAME}: ${cmd}\007"
-    }
-
-    precmd() {
-        echo -ne "\033]0;${USER}@${HOSTNAME}: ${SHELL}\007"
-    }
-
-    autoload -Uz add-zsh-hook
-    add-zsh-hook preexec preexec
-    add-zsh-hook precmd precmd
+# Prompt username
+if [[ -n "${GITHUB_USER}" ]]; then
+  __omb_prompt_user="@${GITHUB_USER}"
+else
+  __omb_prompt_user="\u"
 fi
+
+# Prompt symbol
+__omb_prompt_symbol="\[\e[0m\]➜"
+
+# Main prompt (PS1)
+PS1="\[\e[32m\]${__omb_prompt_user} ${__omb_prompt_symbol} "
+PS1+="\[\e[1;34m\]\w\[\e[0m\] "
+PS1+='$( __omb_theme_git_prompt )'
+PS1+="\[\e[37m\]\$ \[\e[0m\]"
+
+# Optional: set terminal title if using xterm
+case "$TERM" in
+  xterm*|rxvt*)
+    PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"'
+    ;;
+esac
 ```
 ## Bước 6: Sử dụng theme vừa tạo
 ```bash
-nano ~/.zshrc
+nano ~/.bashrc
 ```
 
 Tìm dòng và sửa:
 ```bash
-ZSH_THEME="devcontainers"
+OSH_THEME="devcontainers"
 ```
 
-🎯 Tuỳ chọn: Đặt zsh làm terminal mặc định trong VS Code
+Đặt bash làm terminal mặc định trong VS Code
 1. Mở VS Code.
 2. Nhấn Ctrl + , để mở Settings.
 3. Tìm: terminal.integrated.defaultProfile.linux
-4. Chọn: zsh
+4. Chọn: bash
 * Tips: là vào trong workspaces trên github rồi vào xem tệp custom theme sau đó copy và tạo ra cái của mình hehee
 
 Refer: 
 - https://thuanbui.me/len-doi-terminal-voi-zsh-va-oh-my-zsh/#ii-cai-dat-oh-my-zsh
-- https://github.com/ohmyzsh/ohmyzsh
+- https://github.com/ohmyzsh/ohmybash
