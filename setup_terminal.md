@@ -11,8 +11,7 @@ chsh -s $(which zsh)        # Đặt bash làm shell mặc định
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 ```
 
-
-## Bước 5: Cài theme terminal đẹp
+## Bước 3: Cài theme terminal đẹp
 Tạo file theme mới:
 
 ```bash
@@ -64,7 +63,7 @@ case "$TERM" in
     ;;
 esac
 ```
-## Bước 6: Sử dụng theme vừa tạo
+## Bước 4: Sử dụng theme vừa tạo
 ```bash
 nano ~/.bashrc
 ```
